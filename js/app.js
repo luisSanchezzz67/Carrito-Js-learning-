@@ -9,6 +9,16 @@ cargarEventListeners();
 function cargarEventListeners() {
     //Cuando agregas un curso presionando "Agregar al carrito"
     listarCursos.addEventListener('click', agregarCurso);
+
+    //Elimina cursos del carrito
+    carrito.addEventListener("click", eliminarCurso)
+
+    //Vaciar el carrito
+    vaciarCarritoBtn.addEventListener("click", () => {
+        articulosCarrito = []; //Reseteando el arreglo
+
+        limpiarHTML();
+    })
 }
 
 //funciones
@@ -20,6 +30,17 @@ function agregarCurso(e) {
         LeerDatosCurso(cursoSeleccionado);
     }
     
+}
+//elimina un curso del carrito
+function eliminarCurso(e) {
+    if(e.target.classList.contains("borrar-curso")) {
+        const cursoId = e.target.getAttribute("data-id");
+
+        //elimina del arreglo articulosCarrito por el data-id
+        articulosCarrito = articulosCarrito.filter(curso => curso.id !== cursoId);
+        
+        carritoHTML(); //Iterar sobre el carrito y mostrar su HTML
+    }
 }
 
 //Lee el contenido del HTML al que le damos click y extrae la información del curso
@@ -37,8 +58,27 @@ function LeerDatosCurso(curso) {
         cantidad: 1
     }
 
-    //Agrega elementos al arreglo del carrito
-    articulosCarrito = [...articulosCarrito, infoCurso];
+    //Reivsa si un elemento ya existe en el carrito
+
+    const existe = articulosCarrito.some( curso => curso.id === infoCurso.id)
+    if (existe) {
+        //Actualizamos la cantidad
+        const cursos = articulosCarrito.map(curso => {
+            if(curso.id === infoCurso.id) {
+                curso.cantidad++;
+                return curso; //retorna el objeto actualizado
+
+            }else {
+                return curso;  //retorna los objetos que no son los duplicados
+            }
+        });
+        articulosCarrito = [...curso];
+    }else {
+         //Agrega elementos al arreglo del carrito
+        articulosCarrito = [...articulosCarrito, infoCurso];
+    }
+
+   
 
     console.log(articulosCarrito); 
 
@@ -51,11 +91,25 @@ function carritoHTML() {
     limpiarHTML();
     //Recorre el carrito y genera el HTML
     articulosCarrito.forEach( curso => {
+        const {imagen,titulo,precio, cantidad, id} = curso;
         const row = document.createElement('tr');
+
         row.innerHTML = `
             <td>
-                ${curso.titulo}
+                <img src="${imagen}" width="100">
+            </td>
             <td>
+                ${titulo}
+            </td>
+            <td>
+                ${precio}
+            </td>
+            <td>
+                ${cantidad}
+            </td>
+            <td>
+                <a href="#" class="borrar-curso" data-id="${id}"> X </a>
+            </td>
         `;
 
         //Agrega el HTML del carrito en el tbody
