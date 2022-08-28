@@ -72,7 +72,7 @@ function LeerDatosCurso(curso) {
                 return curso;  //retorna los objetos que no son los duplicados
             }
         });
-        articulosCarrito = [...curso];
+        articulosCarrito = [...cursos];
     }else {
          //Agrega elementos al arreglo del carrito
         articulosCarrito = [...articulosCarrito, infoCurso];
